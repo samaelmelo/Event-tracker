@@ -4,13 +4,14 @@ import style from "./Evento.module.scss";
 import EventoCheckbox from "./EventoCheckbox";
 import { useSetRecoilState } from "recoil";
 import { listaDeEventosState } from "../../state/atom";
+import useAtualizarEvento from "../../state/hooks/useAtualizarEvento";
 
 const Evento: React.FC<{ evento: IEvento }> = ({ evento }) => {
   const setListaDeEventos = useSetRecoilState<IEvento[]>(listaDeEventosState);
 
   const excluirEvento = () => {
-    setListaDeEventos((listaAntiga) =>
-      listaAntiga.filter((events) => events.id !== evento.id),
+    setListaDeEventos((antigaLista) =>
+      antigaLista.filter((evnt) => evnt.id !== evento.id),
     );
   };
 
