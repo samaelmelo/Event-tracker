@@ -3,9 +3,11 @@ import style from "./Calendario.module.scss";
 import ptBR from "./localizacao/ptBR.json";
 import Kalend, { CalendarEvent, CalendarView, OnEventDragFinish } from "kalend";
 import "kalend/dist/styles/index.css";
-import { useRecoilValue } from "recoil";
-import { listaDeEventosState } from "../../state/atom";
 import useAtualizarEvento from "../../state/hooks/useAtualizarEvento";
+import useListaDeEventos from "../../state/hooks/useListaDeEventos";
+import { useRecoilValue } from "recoil";
+import { filtroDeEventos } from "../../state/atom";
+import { IFiltroEventos } from "../../interfaces/IFiltroEventos";
 
 interface IKalendEvento {
   id?: number;
@@ -18,7 +20,20 @@ interface IKalendEvento {
 const Calendario: React.FC = () => {
   const eventosKalend = new Map<string, IKalendEvento[]>();
   const atualizarEvento = useAtualizarEvento();
-  const eventos = useRecoilValue(listaDeEventosState);
+  const todosOsEventos = useListaDeEventos();
+
+  const filtro = useRecoilValue<IFiltroEventos>(filtroDeEventos);
+
+  const eventos = todosOsEventos.filter((event) => {
+    if (!filtro.data) {
+      return true;
+    }
+
+    const ehOMesmoDia =
+      filtro.data.toISOString().slice(0, 10) === event.inicio.toISOString().slice(0, 10);
+
+    return ehOMesmoDia;
+  });
 
   eventos.forEach((evento) => {
     const chave = evento.inicio.toISOString().slice(0, 10);
